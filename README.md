@@ -14,15 +14,14 @@
 
 ## 安装
 
-需要桌面版 VS Code **1.85.0 或更高版本**。支持本机 `.txt`、`.md`、`.text` 等纯文本文件，单文件最大 **20 MiB**。
+使用插件只需要桌面版 VS Code **1.85.0 或更高版本**。安装过程全部在图形界面中完成，无需命令行、Node.js、npm 或克隆源码。
 
-从 [GitHub Releases](https://github.com/congim/dev-notes-reader/releases/latest) 下载 `dev-notes-reader-0.5.1.vsix`。在 VS Code 扩展视图的 `…` 菜单中选择 **从 VSIX 安装…**，选中下载的文件。当前尚未发布到 Marketplace。
+1. 打开 [GitHub Releases 下载页](https://github.com/congim/dev-notes-reader/releases/latest)，在 **Assets（附件）** 中下载 `dev-notes-reader-0.5.1.vsix`，保留文件的 `.vsix` 扩展名。
+2. 打开 VS Code，点击左侧 **扩展** 图标；也可按 `Ctrl+Shift+X`，macOS 按 `⌘⇧X`。
+3. 点击扩展面板右上角的 **…**，选择 **从 VSIX 安装…**，选中刚下载的文件。
+4. 等待安装完成；如出现 **重新加载窗口** 提示，点击它。左侧出现 **Dev Notes Reader** 书本图标后即可开始使用。
 
-从源码打包的文件位于 `dist/`，也可用命令安装：
-
-```sh
-code --install-extension ./dist/dev-notes-reader-0.5.1.vsix
-```
+当前通过 GitHub Releases 提供安装包，尚未发布到 Marketplace。支持本机 `.txt`、`.md`、`.text` 等纯文本文件，单文件最大 **20 MiB**。
 
 已有用户升级后可按 VS Code 提示重新加载窗口。0.5.1 的显示名称统一为 **Dev Notes Reader**，扩展标识仍为 `local-dev-notes.dev-notes-reader`，原有设置、快捷键配置和书架记录继续使用。
 
@@ -61,19 +60,9 @@ macOS 中 `⌘` 为 Command、`⌥` 为 Option、`⌃` 为 Control。
 
 本扩展没有网络请求或遥测。书籍路径、内容摘要、阅读位置和书签保存在 VS Code 的扩展全局存储中。隐藏是一种界面操作，不是安全隔离；详见[本地数据与隐私](docs/privacy.md)。
 
-## 开发与文档
+## 文档与参与开发
 
-开发需要 Node.js **22.13.0+**、npm 和桌面版 VS Code。项目目录统一命名为 `dev-notes-reader`，无需编译：
-
-```sh
-npm ci
-npm run verify
-npm run test:integration
-npm run test:persistence
-npm run package
-```
-
-按 F5 启动 **Run Dev Notes Reader** 调试配置。`npm run package` 自动执行基础检查，生成 `dist/dev-notes-reader-<版本>.vsix`；构建产物与依赖目录不提交到 Git。
+修改源码、运行测试或自行打包时，按[开发指南](docs/development.md)准备开发环境。普通用户直接按上方安装步骤使用插件即可。
 
 源码仓库：[congim/dev-notes-reader](https://github.com/congim/dev-notes-reader)。反馈问题请使用 [Issues](https://github.com/congim/dev-notes-reader/issues)，并提供版本、系统与复现步骤。
 
