@@ -1,0 +1,501 @@
+{
+  "name": "dev-notes-reader",
+  "displayName": "Dev Notes Reader",
+  "description": "本地书架与图形设置，边写代码边阅读，支持独立进度、章节、搜索和书签。",
+  "version": "0.5.1",
+  "publisher": "local-dev-notes",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/congim/dev-notes-reader.git"
+  },
+  "homepage": "https://github.com/congim/dev-notes-reader#readme",
+  "bugs": {
+    "url": "https://github.com/congim/dev-notes-reader/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=22.13.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "reader",
+    "novel",
+    "txt",
+    "小说",
+    "阅读"
+  ],
+  "main": "./src/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "scripts": {
+    "check": "node --check scripts/test-extension.js && node --check scripts/test-persistence.js && node --check src/book.js && node --check src/bookshelf-provider.js && node --check src/extension.js && node --check src/inline-layout.js && node --check src/library.js && node --check test/integration/extension.test.js && node --check test/integration/persistence-driver/extension.js",
+    "test": "node --test test/unit/book.test.js test/unit/library.test.js test/unit/inline-layout.test.js",
+    "test:integration": "node scripts/test-extension.js",
+    "test:persistence": "node scripts/test-persistence.js",
+    "verify": "npm run check && npm test",
+    "vscode:prepublish": "npm run verify",
+    "prepackage": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true })\"",
+    "package": "vsce package --no-dependencies --githubBranch main --out dist",
+    "package:contents": "vsce ls --no-dependencies"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.0.0"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "devNotes.open",
+        "title": "导入并阅读本地文本",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.toggle",
+        "title": "显示 / 隐藏",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.hide",
+        "title": "立即隐藏",
+        "category": "Dev Notes Reader",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "devNotes.switchMode",
+        "title": "切换注释页 / 状态栏",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.next",
+        "title": "下一页 / 段",
+        "category": "Dev Notes Reader",
+        "icon": "$(chevron-right)"
+      },
+      {
+        "command": "devNotes.previous",
+        "title": "上一页 / 段",
+        "category": "Dev Notes Reader",
+        "icon": "$(chevron-left)"
+      },
+      {
+        "command": "devNotes.jump",
+        "title": "跳转进度",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.forget",
+        "title": "清除当前书籍记录",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.startInline",
+        "title": "开始随行阅读",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.setMode",
+        "title": "选择阅读模式",
+        "category": "Dev Notes Reader",
+        "icon": "$(layout)"
+      },
+      {
+        "command": "devNotes.menu",
+        "title": "快捷操作",
+        "category": "Dev Notes Reader",
+        "icon": "$(list-unordered)"
+      },
+      {
+        "command": "devNotes.shelf",
+        "title": "打开本地书架",
+        "category": "Dev Notes Reader",
+        "icon": "$(library)"
+      },
+      {
+        "command": "devNotes.chapters",
+        "title": "章节目录",
+        "category": "Dev Notes Reader",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "devNotes.search",
+        "title": "全文搜索",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.addBookmark",
+        "title": "添加书签",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.bookmarks",
+        "title": "查看书签",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.removeBookmark",
+        "title": "删除书签",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.removeBook",
+        "title": "从书架移除书籍",
+        "category": "Dev Notes Reader",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "devNotes.nextChapter",
+        "title": "下一章",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.previousChapter",
+        "title": "上一章",
+        "category": "Dev Notes Reader"
+      },
+      {
+        "command": "devNotes.importBooks",
+        "title": "批量加入书架",
+        "category": "Dev Notes Reader",
+        "icon": "$(add)"
+      },
+      {
+        "command": "devNotes.readBook",
+        "title": "继续阅读",
+        "category": "Dev Notes Reader",
+        "icon": "$(play)"
+      },
+      {
+        "command": "devNotes.renameBook",
+        "title": "修改书籍显示名称",
+        "category": "Dev Notes Reader",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "devNotes.revealBook",
+        "title": "在文件管理器中定位",
+        "category": "Dev Notes Reader",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "devNotes.settings",
+        "title": "打开阅读设置",
+        "category": "Dev Notes Reader",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "devNotes.refreshShelf",
+        "title": "刷新书架",
+        "category": "Dev Notes Reader",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "devNotes.shelfQuickPick",
+        "title": "快速切换书籍",
+        "category": "Dev Notes Reader",
+        "icon": "$(list-selection)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "devNotes.open",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n"
+      },
+      {
+        "command": "devNotes.toggle",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r"
+      },
+      {
+        "command": "devNotes.hide",
+        "key": "ctrl+alt+h"
+      },
+      {
+        "command": "devNotes.hide",
+        "key": "escape",
+        "when": "devNotes.visible && resourceScheme == dev-notes && editorTextFocus && !suggestWidgetVisible && !findWidgetVisible"
+      },
+      {
+        "command": "devNotes.switchMode",
+        "key": "ctrl+alt+m",
+        "mac": "cmd+alt+m"
+      },
+      {
+        "command": "devNotes.next",
+        "key": "alt+right",
+        "when": "devNotes.visible && resourceScheme == dev-notes && editorTextFocus && !inQuickOpen"
+      },
+      {
+        "command": "devNotes.previous",
+        "key": "alt+left",
+        "when": "devNotes.visible && resourceScheme == dev-notes && editorTextFocus && !inQuickOpen"
+      },
+      {
+        "command": "devNotes.next",
+        "key": "ctrl+alt+right",
+        "mac": "cmd+alt+right",
+        "when": "devNotes.visible && !inQuickOpen"
+      },
+      {
+        "command": "devNotes.previous",
+        "key": "ctrl+alt+left",
+        "mac": "cmd+alt+left",
+        "when": "devNotes.visible && !inQuickOpen"
+      },
+      {
+        "command": "devNotes.jump",
+        "key": "ctrl+alt+j",
+        "mac": "cmd+alt+j",
+        "when": "devNotes.visible"
+      },
+      {
+        "command": "devNotes.startInline",
+        "key": "ctrl+alt+i"
+      },
+      {
+        "command": "devNotes.menu",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k"
+      },
+      {
+        "command": "devNotes.shelf",
+        "key": "ctrl+alt+l"
+      },
+      {
+        "command": "devNotes.chapters",
+        "key": "ctrl+alt+t",
+        "when": "!inQuickOpen"
+      },
+      {
+        "command": "devNotes.search",
+        "key": "ctrl+alt+f",
+        "when": "devNotes.visible && !inQuickOpen"
+      },
+      {
+        "command": "devNotes.addBookmark",
+        "key": "ctrl+alt+b",
+        "when": "devNotes.visible && !inQuickOpen"
+      }
+    ],
+    "configuration": {
+      "title": "Dev Notes Reader",
+      "properties": {
+        "devNotes.lineLength": {
+          "type": "integer",
+          "default": 28,
+          "minimum": 8,
+          "maximum": 80,
+          "scope": "application",
+          "description": "每行字数，也决定状态栏的文本长度。",
+          "order": 2
+        },
+        "devNotes.pageLines": {
+          "type": "integer",
+          "default": 12,
+          "minimum": 3,
+          "maximum": 40,
+          "scope": "application",
+          "description": "代码注释模式每页行数。",
+          "order": 3
+        },
+        "devNotes.inlineLines": {
+          "type": "integer",
+          "default": 6,
+          "minimum": 1,
+          "maximum": 12,
+          "scope": "application",
+          "description": "随行阅读同时显示的正文行数；短文件或可见代码行不足时自动缩减，翻页按实际显示行数前进。",
+          "order": 1
+        },
+        "devNotes.hideOnBlur": {
+          "type": "boolean",
+          "default": true,
+          "scope": "application",
+          "description": "切换到其他窗口时隐藏；返回后需要手动恢复。",
+          "order": 4
+        },
+        "devNotes.encoding": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "utf-8",
+            "gb18030",
+            "utf-16le",
+            "utf-16be"
+          ],
+          "default": "auto",
+          "scope": "application",
+          "description": "下次导入或重启后恢复文件时使用的编码。auto 尝试 BOM、UTF-8，再尝试 GB18030。",
+          "order": 5,
+          "enumDescriptions": [
+            "自动尝试 BOM、UTF-8、GB18030",
+            "UTF-8 文本",
+            "GBK / GB18030 中文文本",
+            "UTF-16 小端文本",
+            "UTF-16 大端文本"
+          ]
+        }
+      }
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "devNotes.chapters",
+          "when": "resourceScheme == dev-notes && devNotes.visible",
+          "group": "navigation@0"
+        },
+        {
+          "command": "devNotes.previous",
+          "when": "resourceScheme == dev-notes && devNotes.visible",
+          "group": "navigation@1"
+        },
+        {
+          "command": "devNotes.next",
+          "when": "resourceScheme == dev-notes && devNotes.visible",
+          "group": "navigation@2"
+        },
+        {
+          "command": "devNotes.menu",
+          "when": "resourceScheme == dev-notes && devNotes.visible",
+          "group": "navigation@3"
+        },
+        {
+          "command": "devNotes.hide",
+          "when": "resourceScheme == dev-notes && devNotes.visible",
+          "group": "navigation@4"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "devNotes.importBooks",
+          "when": "view == devNotes.books",
+          "group": "navigation@1"
+        },
+        {
+          "command": "devNotes.settings",
+          "when": "view == devNotes.books",
+          "group": "navigation@2"
+        },
+        {
+          "command": "devNotes.refreshShelf",
+          "when": "view == devNotes.books && devNotes.shelfVisible",
+          "group": "navigation@3"
+        },
+        {
+          "command": "devNotes.hide",
+          "when": "view == devNotes.books && devNotes.shelfVisible",
+          "group": "navigation@4"
+        },
+        {
+          "command": "devNotes.setMode",
+          "when": "view == devNotes.books",
+          "group": "1_reading@1"
+        },
+        {
+          "command": "devNotes.shelfQuickPick",
+          "when": "view == devNotes.books",
+          "group": "1_reading@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "devNotes.readBook",
+          "when": "view == devNotes.books && viewItem == devNotes.book",
+          "group": "inline@1"
+        },
+        {
+          "command": "devNotes.readBook",
+          "when": "view == devNotes.books && viewItem == devNotes.book",
+          "group": "1_reading@1"
+        },
+        {
+          "command": "devNotes.renameBook",
+          "when": "view == devNotes.books && viewItem == devNotes.book",
+          "group": "2_manage@1"
+        },
+        {
+          "command": "devNotes.revealBook",
+          "when": "view == devNotes.books && viewItem == devNotes.book",
+          "group": "2_manage@2"
+        },
+        {
+          "command": "devNotes.removeBook",
+          "when": "view == devNotes.books && viewItem == devNotes.book",
+          "group": "3_remove@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "devNotes.readBook",
+          "when": "false"
+        },
+        {
+          "command": "devNotes.renameBook",
+          "when": "false"
+        },
+        {
+          "command": "devNotes.revealBook",
+          "when": "false"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devNotes",
+          "title": "Dev Notes Reader",
+          "icon": "media/activitybar-books.svg"
+        }
+      ]
+    },
+    "views": {
+      "devNotes": [
+        {
+          "id": "devNotes.books",
+          "name": "本地书架",
+          "contextualTitle": "Dev Notes Reader",
+          "icon": "media/activitybar-books.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "devNotes.books",
+        "when": "!devNotes.shelfVisible",
+        "contents": "书架已隐藏。主动打开后显示本地书名与阅读进度。\n[打开本地书架](command:devNotes.shelf)\n[阅读设置](command:devNotes.settings)"
+      },
+      {
+        "view": "devNotes.books",
+        "when": "devNotes.shelfVisible",
+        "contents": "把本机 TXT / Markdown 加入书架，每本书独立保存进度和书签。\n[批量加入书架](command:devNotes.importBooks)\n[阅读设置](command:devNotes.settings)\n只记录文件位置，不复制或修改原书。"
+      }
+    ]
+  },
+  "overrides": {
+    "@azure/msal-node": "7.1.1"
+  },
+  "private": true,
+  "files": [
+    "src/**",
+    "media/**",
+    "docs/*.md",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}
